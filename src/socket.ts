@@ -57,6 +57,7 @@ const initializeSocketIO = (server: HttpServer) => {
           } catch (error: any) {
             console.log('🚀 ~ error:', error);
           }
+          
         },
       );
 
