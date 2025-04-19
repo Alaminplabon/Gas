@@ -41,6 +41,25 @@ const initializeSocketIO = (server: HttpServer) => {
         callback({ success: true });
       });
 
+      socket.on(
+        'getLocation',
+        async (
+          messageData: { latitude: number; longitude: number },
+          callback: any,
+        ) => {
+          try {
+            const data = messageData;
+            // console.log('locationd--', data);
+            return socket.broadcast.emit(
+              'serverToSendLocation::' + user.userId,
+              data,
+            );
+          } catch (error: any) {
+            console.log('🚀 ~ error:', error);
+          }
+        },
+      );
+
       //-----------------------Disconnect------------------------//
       socket.on('disconnect', () => {
         onlineUser.delete(user?._id?.toString());

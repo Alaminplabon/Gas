@@ -4,8 +4,14 @@ import { IOrderFuel } from './orderFuel.interface';
 const orderFuelSchema: Schema<IOrderFuel> = new Schema(
   {
     location: {
-      type: String,
-      required: true,
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number],
+      },
     },
     vehicleId: {
       type: Schema.Types.ObjectId,
@@ -28,6 +34,17 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
     deliveryFee: {
       type: Number,
       required: true,
+    },
+    price: {
+      type: Number,
+    },
+    presetAmount: {
+      type: Boolean,
+      default: false,
+    },
+    customAmount: {
+      type: Boolean,
+      default: false,
     },
     tip: {
       type: Number,
