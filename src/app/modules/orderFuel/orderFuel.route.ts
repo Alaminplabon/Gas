@@ -1,9 +1,15 @@
 import { Router } from 'express';
 import { orderFuelController } from './orderFuel.controller';
+import auth from '../../middleware/auth';
+import { USER_ROLE } from '../user/user.constants';
 
 const router = Router();
 
-router.post('/create-orderFuel', orderFuelController.createorderFuel);
+router.post(
+  '/create-orderFuel',
+  auth(USER_ROLE.user),
+  orderFuelController.createorderFuel,
+);
 
 router.patch('/update/:id', orderFuelController.updateorderFuel);
 

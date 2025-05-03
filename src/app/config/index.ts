@@ -31,6 +31,7 @@ export default {
   socket_port: process.env.SOCKET_PORT,
   stripe_secret: process.env.STRIPE_API_SECRET,
   stripe_key: process.env.STRIPE_API_KEY,
+  success_url: process.env.PAYMENT_SUCCESS_URL,
   aws,
   stripe,
 };

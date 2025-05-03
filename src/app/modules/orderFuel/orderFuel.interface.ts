@@ -16,4 +16,7 @@ export interface IOrderFuel {
   deliveryFee: number;
   tip: number;
   cancelReason: string;
+  paymentId: ObjectId;
+  isPaid: boolean;
+  finalAmountOfPayment: number;
 }

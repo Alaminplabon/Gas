@@ -57,10 +57,24 @@ const deletevechile = async (id: string) => {
   return result;
 };
 
+const getMyVechiles = async (userId: string, query: Record<string, any>) => {
+  const queryBuilder = new QueryBuilder(Vehicle.find({ userId }), query)
+    .search(['make', 'model'])
+    .filter()
+    .paginate()
+    .sort()
+    .fields();
+
+  const data = await queryBuilder.modelQuery;
+  const meta = await queryBuilder.countTotal();
+  return { data, meta };
+};
+
 export const vechileService = {
   createvechile,
   getAllvechile,
   getvechileById,
   updatevechile,
   deletevechile,
+  getMyVechiles,
 };

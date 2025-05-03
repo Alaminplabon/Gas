@@ -4,6 +4,8 @@ import sendResponse from '../../utils/sendResponse';
 import { vechileService } from './vechile.service';
 
 const createvechile = catchAsync(async (req: Request, res: Response) => {
+  const userId = req?.user?.userId;
+  req.body.userId = userId;
   const result = await vechileService.createvechile(req.body);
   sendResponse(res, {
     statusCode: 200,
@@ -53,10 +55,22 @@ const deletevechile = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getMyVechiles = catchAsync(async (req: Request, res: Response) => {
+  const userId = req?.user?.userId;
+  const result = await vechileService.getMyVechiles(userId, req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Your vehicles retrieved successfully',
+    data: result,
+  });
+});
+
 export const vechileController = {
   createvechile,
   getAllvechile,
   getvechileById,
   updatevechile,
   deletevechile,
+  getMyVechiles,
 };

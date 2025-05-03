@@ -6,6 +6,8 @@ import { notificationRoutes } from '../modules/notification/notificaiton.route';
 import { orderFuelRoutes } from '../modules/orderFuel/orderFuel.route';
 import { vechileRoutes } from '../modules/vechile/vechile.route';
 import { reviewRoutes } from '../modules/review/review.route';
+import { paymentsRoutes } from '../modules/payments/payments.route';
+import { locationRoutes } from '../modules/location/location.route';
 
 const router = Router();
 const moduleRoutes = [
@@ -36,6 +38,14 @@ const moduleRoutes = [
   {
     path: '/reviews',
     route: reviewRoutes,
+  },
+  {
+    path: '/payments',
+    route: paymentsRoutes,
+  },
+  {
+    path: '/locations',
+    route: locationRoutes,
   },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));

@@ -4,6 +4,8 @@ import sendResponse from '../../utils/sendResponse';
 import { orderFuelService } from './orderFuel.service';
 
 const createorderFuel = catchAsync(async (req: Request, res: Response) => {
+  const userId = req?.user?.userId;
+  req.body.userId = userId;
   const result = await orderFuelService.createorderFuel(req.body);
   sendResponse(res, {
     statusCode: 200,

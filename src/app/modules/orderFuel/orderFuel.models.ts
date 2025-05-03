@@ -23,10 +23,6 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
       required: true,
       ref: 'User', // Replace with actual user model if needed
     },
-    fuelType: {
-      type: String,
-      required: true,
-    },
     amount: {
       type: Number,
       required: true,
@@ -62,6 +58,22 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
     },
     cancelReason: {
       type: String,
+    },
+    fuelType: {
+      type: String,
+      enum: ['Diesel', 'Petrol', 'Electric'],
+      required: true,
+    },
+    paymentId: {
+      type: Schema.Types.ObjectId,
+      ref: 'Payment',
+    },
+    isPaid: {
+      type: Boolean,
+      default: false,
+    },
+    finalAmountOfPayment: {
+      type: Number,
     },
   },
   {
