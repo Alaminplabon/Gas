@@ -98,7 +98,7 @@ const checkout = async (payload: IPayment) => {
   }
 
   const user = await User.findById(payload?.user);
-  const amount = order.amount + order.deliveryFee + order.tip;
+  const amount = order.amount + order.deliveryFee + order.tip + order.price;
 
   // Check for existing unpaid payment for the order
   const existingPayment: IPayment | null = await Payment.findOne({
