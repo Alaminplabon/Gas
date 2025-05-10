@@ -7,15 +7,17 @@ const PaymentSchema = new Schema<IPayment>(
     user: {
       type: Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
     },
     subscription: {
       type: Schema.Types.ObjectId,
       ref: 'Subscriptions',
     },
+    orderFuelId: {
+      type: Schema.Types.ObjectId,
+      ref: 'OrderFuel',
+    },
     amount: {
       type: Number,
-      required: true,
       min: 0,
     },
     isPaid: {
@@ -28,11 +30,6 @@ const PaymentSchema = new Schema<IPayment>(
     },
     tranId: {
       type: String,
-      required: true,
-    },
-    orderFuel: {
-      type: Schema.Types.ObjectId,
-      ref: 'orderFuel',
     },
   },
   {

@@ -22,6 +22,15 @@ const confirmPayment = catchAsync(async (req: Request, res: Response) => {
   res.redirect(
     `${config.success_url}?subscriptionId=${results?.subscription}&paymentId=${results?._id}`,
   );
+
+  // console.log('req.query.paymentId', req?.query);
+  //   const result = await paymentsService.generateInvoice(req?.query.paymentId);
+  //   sendResponse(res, {
+  //     success: true,
+  //     statusCode: httpStatus.OK,
+  //     data: result,
+  //     message: 'Payment retrieved successfully',
+  //   });
 });
 
 const dashboardData = catchAsync(async (req: Request, res: Response) => {
