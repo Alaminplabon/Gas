@@ -64,7 +64,45 @@ const createorderFuel = async (payload: IOrderFuel) => {
 // Get All
 const getAllorderFuel = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
-    orderFuel.find().populate(['userId']),
+    orderFuel
+      .find({ isPaid: true, orderStatus: 'pending' })
+      .populate(['userId']),
+    query,
+  )
+    .search(['location', 'fuelType'])
+    .filter()
+    .paginate()
+    .sort()
+    .fields();
+
+  const data = await queryBuilder.modelQuery;
+  const meta = await queryBuilder.countTotal();
+  return { data, meta };
+};
+
+const getInProgressorderFuel = async (query: Record<string, any>) => {
+  const queryBuilder = new QueryBuilder(
+    orderFuel
+      .find({ isPaid: true, orderStatus: 'inProgress' })
+      .populate(['userId']),
+    query,
+  )
+    .search(['location', 'fuelType'])
+    .filter()
+    .paginate()
+    .sort()
+    .fields();
+
+  const data = await queryBuilder.modelQuery;
+  const meta = await queryBuilder.countTotal();
+  return { data, meta };
+};
+
+const getDeliveredorderFuel = async (query: Record<string, any>) => {
+  const queryBuilder = new QueryBuilder(
+    orderFuel
+      .find({ isPaid: true, orderStatus: 'Delivered' })
+      .populate(['userId']),
     query,
   )
     .search(['location', 'fuelType'])
@@ -111,4 +149,6 @@ export const orderFuelService = {
   getorderFuelById,
   updateorderFuel,
   deleteorderFuel,
+  getDeliveredorderFuel,
+  getInProgressorderFuel,
 };

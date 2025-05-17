@@ -15,6 +15,9 @@ router.patch('/update/:id', orderFuelController.updateorderFuel);
 
 router.delete('/:id', orderFuelController.deleteorderFuel);
 
+router.get('/in-progress', orderFuelController.getInProgressorderFuel);
+router.get('/delivered', orderFuelController.getDeliveredorderFuel);
+
 router.get('/:id', orderFuelController.getorderFuelById);
 router.get('/', orderFuelController.getAllorderFuel);
 

@@ -53,7 +53,8 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ['Pending', 'Delivered', 'Cancelled'],
+      enum: ['Pending', 'InProgress', 'Delivered', 'Cancelled'],
+      default: 'Pending',
       required: true,
     },
     cancelReason: {
