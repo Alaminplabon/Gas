@@ -15,6 +15,16 @@ const createorderFuel = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getActiveOrderFuel = catchAsync(async (req: Request, res: Response) => {
+  const result = await orderFuelService.getActiveOrderFuel(req.query);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Active orders retrieved successfully',
+    data: result,
+  });
+});
+
 const getAllorderFuel = catchAsync(async (req: Request, res: Response) => {
   const result = await orderFuelService.getAllorderFuel(req.query);
   sendResponse(res, {
@@ -90,4 +100,5 @@ export const orderFuelController = {
   deleteorderFuel,
   getDeliveredorderFuel,
   getInProgressorderFuel,
+  getActiveOrderFuel,
 };

@@ -12,11 +12,12 @@ export interface IOrderFuel {
   price: number;
   fuelType: 'Diesel' | 'Petrol' | 'Electric';
   orderType: 'Fuel' | 'Battery';
-  orderStatus: 'Pending' | 'Delivered' | 'Cancelled';
+  orderStatus: 'active' | 'Pending' | 'Delivered' | 'Cancelled';
   deliveryFee: number;
   tip: number;
   cancelReason: string;
   paymentId: ObjectId;
   isPaid: boolean;
   finalAmountOfPayment: number;
+  zipCode: string;
 }

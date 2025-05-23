@@ -8,6 +8,10 @@ import { vechileRoutes } from '../modules/vechile/vechile.route';
 import { reviewRoutes } from '../modules/review/review.route';
 import { paymentsRoutes } from '../modules/payments/payments.route';
 import { locationRoutes } from '../modules/location/location.route';
+import { deliveryRoutes } from '../modules/delivery/delivery.route';
+import { questionRoutes } from '../modules/question/question.route';
+import { cityExpansionRoutes } from '../modules/cityExpansion/cityExpansion.route';
+import businessOurRoutes from '../modules/businessOur/businessOur.routes';
 
 const router = Router();
 const moduleRoutes = [
@@ -46,6 +50,22 @@ const moduleRoutes = [
   {
     path: '/locations',
     route: locationRoutes,
+  },
+  {
+    path: '/delivery',
+    route: deliveryRoutes,
+  },
+  {
+    path: '/questions',
+    route: questionRoutes,
+  },
+  {
+    path: '/cityExpansion',
+    route: cityExpansionRoutes,
+  },
+  {
+    path: '/business-ours',
+    route: businessOurRoutes,
   },
 ];
 moduleRoutes.forEach(route => router.use(route.path, route.route));

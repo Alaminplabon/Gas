@@ -22,7 +22,7 @@ const vechileSchema: Schema<IVehicle> = new Schema(
     userId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'User', // Replace with actual user model if needed
+      ref: 'User',
     },
   },
   {

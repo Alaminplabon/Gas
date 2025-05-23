@@ -66,6 +66,17 @@ const getMyVechiles = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getVechileByUser = catchAsync(async (req: Request, res: Response) => {
+  const userId = req?.user?.userId;
+  const result = await vechileService.getVechileByUser(userId);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Vehicles for the user retrieved successfully',
+    data: result,
+  });
+});
+
 export const vechileController = {
   createvechile,
   getAllvechile,
@@ -73,4 +84,5 @@ export const vechileController = {
   updatevechile,
   deletevechile,
   getMyVechiles,
+  getVechileByUser,
 };

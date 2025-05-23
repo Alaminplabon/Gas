@@ -39,6 +39,14 @@ const getvechileById = async (id: string) => {
   return result;
 };
 
+const getVechileByUser = async (userId: string) => {
+  const result = await Vehicle.findById({ userId: userId });
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Vehicle not found');
+  }
+  return result;
+};
+
 // Update vehicle
 const updatevechile = async (id: string, payload: Partial<IVehicle>) => {
   const result = await Vehicle.findByIdAndUpdate(id, payload, { new: true });
@@ -77,4 +85,5 @@ export const vechileService = {
   updatevechile,
   deletevechile,
   getMyVechiles,
+  getVechileByUser,
 };

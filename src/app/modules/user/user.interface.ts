@@ -19,6 +19,9 @@ export interface IUser {
   role: string;
   isGoogleLogin: boolean;
   address?: string;
+  delevaryEarn?: number;
+  tip?: number;
+  totalEarnings?: number;
   needsPasswordChange: boolean;
   passwordChangedAt?: Date;
   isDeleted: boolean;

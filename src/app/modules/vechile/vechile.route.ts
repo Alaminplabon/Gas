@@ -15,7 +15,11 @@ router.get(
 );
 
 router.delete('/:id', vechileController.deletevechile);
-
+router.get(
+  '/my-vehicles',
+  auth(USER_ROLE.user),
+  vechileController.getvechileById,
+);
 router.get('/:id', vechileController.getvechileById);
 router.get('/', vechileController.getAllvechile);
 
