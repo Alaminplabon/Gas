@@ -86,10 +86,10 @@ const getPaymentsByUserIdWithParams = catchAsync(
 );
 
 const getAllPayments = catchAsync(async (req: Request, res: Response) => {
-  const year = req.query.year as string;
-  const month = req.query.month as string;
-  console.log(year, month);
-  const result = await paymentsService.getAllPayments(year, month); // Assume this service method exists
+  // const year = req.query.year as string;
+  // const month = req.query.month as string;
+  // console.log(year, month);
+  const result = await paymentsService.getAllPayments(); // Assume this service method exists
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,

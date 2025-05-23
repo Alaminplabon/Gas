@@ -952,33 +952,32 @@ const dashboardData = async (query: Record<string, any>) => {
   };
 };
 
-const getAllPayments = async (year: string, month: string) => {
+const getAllPayments = async () => {
   // Ensure that year and month are valid numbers
-  const parsedYear = Number(year);
-  const parsedMonth = Number(month);
+  // const parsedYear = Number(year);
+  // const parsedMonth = Number(month);
 
-  if (
-    isNaN(parsedYear) ||
-    isNaN(parsedMonth) ||
-    parsedMonth < 0 ||
-    parsedMonth > 11
-  ) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid year or month');
-  }
+  // if (
+  //   isNaN(parsedYear) ||
+  //   isNaN(parsedMonth) ||
+  //   parsedMonth < 0 ||
+  //   parsedMonth > 11
+  // ) {
+  //   throw new AppError(httpStatus.BAD_REQUEST, 'Invalid year or month');
+  // }
 
-  console.log('Parsed year:', parsedYear, 'Parsed month:', parsedMonth); // Debugging logs
+  // console.log('Parsed year:', parsedYear, 'Parsed month:', parsedMonth); // Debugging logs
 
-  const startDate = new Date(parsedYear, parsedMonth, 1); // Start of the given month
-  const endDate = new Date(parsedYear, parsedMonth + 1, 1); // Start of the next month
+  // const startDate = new Date(parsedYear, parsedMonth, 1); // Start of the given month
+  // const endDate = new Date(parsedYear, parsedMonth + 1, 1); // Start of the next month
 
-  if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Invalid date range');
-  }
+  // if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+  //   throw new AppError(httpStatus.BAD_REQUEST, 'Invalid date range');
+  // }
 
-  const result = await Payment.find({
-    isPaid: true,
-    createdAt: { $gte: startDate, $lt: endDate }, // Payments within the month
-  }).populate('user');
+  const result = await Payment.find({ isPaid: true })
+    // createdAt: { $gte: startDate, $lt: endDate }, // Payments within the month
+    .populate('user');
 
   return result;
 };

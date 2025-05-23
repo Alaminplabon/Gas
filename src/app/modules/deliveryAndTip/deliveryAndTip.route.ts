@@ -4,10 +4,7 @@ import { deliveryAndTipController } from './deliveryAndTip.controller';
 
 const router = Router();
 
-router.post(
-  '/create-deliveryAndTip',
-  deliveryAndTipController.createDeliveryAndTip,
-);
+router.post('/create', deliveryAndTipController.createDeliveryAndTip);
 router.patch('/update/:id', deliveryAndTipController.updateDeliveryAndTip);
 router.delete('/:id', deliveryAndTipController.deleteDeliveryAndTip);
 router.get('/:id', deliveryAndTipController.getDeliveryAndTipById);

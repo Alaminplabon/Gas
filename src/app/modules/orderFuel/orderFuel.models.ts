@@ -49,21 +49,20 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
     orderType: {
       type: String,
       enum: ['Fuel', 'Battery'],
-      required: true,
+      // required: true,
     },
     orderStatus: {
       type: String,
       enum: ['active', 'Pending', 'InProgress', 'Delivered', 'Cancelled'],
       default: 'active',
-      required: true,
+      // required: true,
     },
     cancelReason: {
       type: String,
     },
     fuelType: {
-      type: String,
-      enum: ['Diesel', 'Petrol', 'Electric'],
-      required: true,
+      type: String
+      // required: true,
     },
     paymentId: {
       type: Schema.Types.ObjectId,

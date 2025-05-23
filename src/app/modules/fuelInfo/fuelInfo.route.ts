@@ -3,7 +3,7 @@ import { fuelInfoController } from './fuelInfo.controller';
 
 const router = Router();
 
-router.post('/create-fuelInfo', fuelInfoController.createfuelInfo);
+router.post('/create', fuelInfoController.createfuelInfo);
 router.patch('/update/:id', fuelInfoController.updatefuelInfo);
 router.delete('/:id', fuelInfoController.deletefuelInfo);
 
