@@ -10,7 +10,7 @@ export interface IOrderFuel {
   customAmount: boolean;
   amount: number;
   price: number;
-  fuelType: 'Diesel' | 'Petrol' | 'Electric';
+  fuelType: string;
   orderType: 'Fuel' | 'Battery';
   orderStatus: 'active' | 'Pending' | 'Delivered' | 'Cancelled';
   deliveryFee: number;

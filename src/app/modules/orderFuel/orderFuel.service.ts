@@ -6,6 +6,7 @@ import { orderFuel } from './orderFuel.models';
 import { Location } from '../location/location.models';
 import { FuelInfoModel } from '../fuelInfo/fuelInfo.models';
 import { DeliveryAndTipModel } from '../deliveryAndTip/deliveryAndTip.models';
+import { z } from 'zod';
 
 const MILES_TO_METERS = 1609.34;
 
@@ -95,9 +96,8 @@ const createorderFuel = async (payload: IOrderFuel) => {
         `Fuel type "${payload.fuelType}" is not recognized`,
       );
     }
-    price = fuelInfo.fuelPrice * payload.amount;
+    price = payload.amount * fuelInfo.fuelPrice;
   }
-
   // 2. Check if within 10 miles of any registered service point
   const nearbyLocation = await Location.findOne({
     location: {
@@ -118,21 +118,21 @@ const createorderFuel = async (payload: IOrderFuel) => {
   }
 
   // 3. Ensure zipCode is present
-  const zipCode = payload.zipCode;
+  const zipCode = String(payload.zipCode).trim();
   if (!zipCode) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Zip code is required');
   }
 
-  // 4. Fetch delivery fee and tip
   const deliveryDoc = await DeliveryAndTipModel.findOne({
-    name: 'deliveryFee',
-    zipCode,
+    name: 'Standard Delivery',
+    zipCode: { $all: [zipCode] },
   });
+
   const deliveryFee = deliveryDoc?.price ?? 0;
 
   const tipDoc = await DeliveryAndTipModel.findOne({
-    name: 'tip',
-    zipCode,
+    name: 'Standard Delivery',
+    zipCode: { $all: [zipCode] },
   });
   const tip = tipDoc?.price ?? 0;
 
@@ -162,7 +162,7 @@ const createorderFuel = async (payload: IOrderFuel) => {
 const getAllorderFuel = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
     orderFuel
-      .find({ isPaid: true, orderStatus: 'pending' })
+      .find({ isPaid: true, orderStatus: 'Pending' })
       .populate(['userId']),
     query,
   )

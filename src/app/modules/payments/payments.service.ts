@@ -461,28 +461,10 @@ const confirmPayment = async (query: Record<string, any>) => {
 
     // Update orderFuel status
     order.isPaid = true;
+    order.orderStatus = 'Pending';
     order.paymentId = payment._id;
     order.finalAmountOfPayment = payment.amount;
     await order.save();
-
-    // Notify user
-    // const admin = await User.findOne({ role: USER_ROLE.admin });
-    // await Notification.create([
-    //   {
-    //     receiver: payment.user._id,
-    //     message: 'Your fuel order payment was successful!',
-    //     description: `Payment ID: ${payment._id} for your fuel order has been confirmed.`,
-    //     refference: payment._id,
-    //     model_type: modeType.Payment,
-    //   },
-    //   {
-    //     receiver: admin?._id,
-    //     message: 'New fuel order payment received.',
-    //     description: `User ${(payment.user as IUser)?.email} completed a fuel order payment.`,
-    //     refference: payment._id,
-    //     model_type: modeType.Payment,
-    //   },
-    // ]);
 
     return payment;
   } catch (error: any) {
