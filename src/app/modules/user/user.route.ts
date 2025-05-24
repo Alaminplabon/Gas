@@ -6,9 +6,11 @@ import auth from '../../middleware/auth';
 import { USER_ROLE } from './user.constants';
 import parseData from '../../middleware/parseData';
 import fileUpload from '../../middleware/fileUpload';
-const upload = fileUpload('./public/uploads/profile');
+import multer, { memoryStorage } from 'multer';
 
 const router = Router();
+const storage = memoryStorage();
+const upload = multer({ storage });
 
 router.post(
   '/create',
