@@ -17,7 +17,10 @@ const createquestion = async (payload: IQuestion) => {
 
 // Get all questions with pagination, filter, search, and population
 const getAllquestion = async (query: Record<string, any>) => {
-  const queryBuilder = new QueryBuilder(Question.find(), query)
+  const queryBuilder = new QueryBuilder(
+    Question.find().populate('driverId'),
+    query,
+  )
     .search(['text']) // allows searching inside question text
     .filter()
     .paginate()

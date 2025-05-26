@@ -20,22 +20,67 @@ import fs from 'fs';
 
 // Login
 const login = async (payload: TLogin) => {
-  const user: IUser | null = await User.isUserExist(payload?.email);
+  let user = await User.findOne({ email: payload?.email });
+  console.log('user', user);
   if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    if (payload.isGoogleLogin) {
+      user = await User.create({
+        email: payload.email,
+        fullname: payload.fullname,
+        isGoogleLogin: true,
+        password: '',
+        role: payload.role,
+        verification: {
+          status: true,
+        },
+      });
+    } else {
+      throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+    }
+  } else {
+    if (user?.isDeleted) {
+      throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted');
+    }
+
+    // If the user is registered with Google, enforce Google login
+    if (user.isGoogleLogin && !payload.isGoogleLogin) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        'You have to login with google ',
+      );
+    }
+
+    // If the user is not registered with Google but payload has isGoogleLogin
+    if (!user.isGoogleLogin && payload.isGoogleLogin) {
+      throw new AppError(
+        httpStatus.FORBIDDEN,
+        'You dont have google login with this email',
+      );
+    }
+
+    // Handle Google login case
+    if (user.isGoogleLogin) {
+      if (!user?.verification?.status) {
+        throw new AppError(
+          httpStatus.FORBIDDEN,
+          'User account is not verified',
+        );
+      }
+    } else {
+      // Handle non-Google login case, verify password
+      const passwordMatched = await User.isPasswordMatched(
+        payload.password as any,
+        user.password,
+      );
+      if (!passwordMatched) {
+        throw new AppError(httpStatus.BAD_REQUEST, 'Password does not match');
+      }
+    }
+    if (!user?.verification?.status) {
+      throw new AppError(httpStatus.FORBIDDEN, 'User account is not verified');
+    }
   }
 
-  if (user?.isDeleted) {
-    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted');
-  }
-
-  if (!(await User.isPasswordMatched(payload.password, user.password))) {
-    throw new AppError(httpStatus.BAD_REQUEST, 'Password does not match');
-  }
-
-  if (!user?.verification?.status) {
-    throw new AppError(httpStatus.FORBIDDEN, 'User account is not verified');
-  }
   const jwtPayload: { userId: string; role: string } = {
     userId: user?._id?.toString() as string,
     role: user?.role,
@@ -127,20 +172,20 @@ const forgotPassword = async (email: string) => {
     },
   });
 
-    const otpEmailPath = path.join(
-      __dirname,
-      '../../../../public/view/forgot_pass_mail.html',
-    );
+  const otpEmailPath = path.join(
+    __dirname,
+    '../../../../public/view/forgot_pass_mail.html',
+  );
 
-    await sendEmail(
-      user?.email,
-      'Your reset password OTP is',
-      fs
-        .readFileSync(otpEmailPath, 'utf8')
-        .replace('{{otp}}', otp)
-        .replace('{{email}}', user?.email),
-    );
-    
+  await sendEmail(
+    user?.email,
+    'Your reset password OTP is',
+    fs
+      .readFileSync(otpEmailPath, 'utf8')
+      .replace('{{otp}}', otp)
+      .replace('{{email}}', user?.email),
+  );
+
   // await sendEmail(
   //   email,
   //   'Your reset password OTP is:',

@@ -11,8 +11,8 @@ export interface IPackage {
   popularity: number;
   durationType?: durationType;
   isDeleted: boolean;
-  descriptions: string[];
-  codeGenetarelimit: number;
+  freeDeliverylimit: number;
+  coverVehiclelimit: number;
 }
 
 export type IPackageModel = Model<IPackage, Record<string, unknown>>;

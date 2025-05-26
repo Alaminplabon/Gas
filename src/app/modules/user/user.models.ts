@@ -13,7 +13,6 @@ const userSchema: Schema<IUser> = new Schema(
     },
     fullname: {
       type: String,
-      required: true,
       default: null,
     },
     location: {

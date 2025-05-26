@@ -4,7 +4,7 @@ import { IQuestion } from './question.interface';
 const questionSchema = new Schema<IQuestion>(
   {
     text: { type: String, required: true },
-    answerType: { type: String, required: true },
+    answerType: { type: String },
     comment: { type: String },
     orderId: { type: Schema.Types.ObjectId, ref: 'Order' },
     driverId: { type: Schema.Types.ObjectId, ref: 'User' },

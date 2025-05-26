@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import catchAsync from '../../utils/catchAsync';
 import sendResponse from '../../utils/sendResponse';
 import { driverEarningService } from './driverErning.service';
+import httpStatus from 'http-status';
 
 // Create a new driver earning record
 const createDriverEarning = catchAsync(async (req: Request, res: Response) => {
@@ -64,10 +65,27 @@ const deleteDriverEarning = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getEarningsSummary = catchAsync(async (req: Request, res: Response) => {
+  const { userId } = req.params;
+  const filter = (req.query.filter as 'week' | 'month' | 'all') || 'all';
+
+  const data = userId
+    ? await driverEarningService.getDriverEarningsSummary(userId, filter)
+    : await driverEarningService.getAllDriverEarningsSummary(filter);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Earning summary fetched successfully',
+    data,
+  });
+});
+
 export const driverEarningController = {
   createDriverEarning,
   getAllDriverEarnings,
   getDriverEarningById,
   updateDriverEarning,
   deleteDriverEarning,
+  getEarningsSummary,
 };
