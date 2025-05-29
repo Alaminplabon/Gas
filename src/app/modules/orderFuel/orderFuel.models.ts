@@ -53,15 +53,22 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
     },
     orderStatus: {
       type: String,
-      enum: ['active', 'Pending', 'InProgress', 'Delivered', 'Cancelled'],
-      default: 'active',
+      enum: [
+        'Unassigned',
+        'active',
+        'Pending',
+        'InProgress',
+        'Delivered',
+        'Cancelled',
+      ],
+      default: 'Unassigned',
       // required: true,
     },
     cancelReason: {
       type: String,
     },
     fuelType: {
-      type: String
+      type: String,
       // required: true,
     },
     paymentId: {
@@ -78,6 +85,13 @@ const orderFuelSchema: Schema<IOrderFuel> = new Schema(
     zipCode: {
       type: String,
       required: true,
+    },
+    servicesFee: {
+      type: Number,
+    },
+    driverId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
     },
   },
   {

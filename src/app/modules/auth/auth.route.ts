@@ -21,12 +21,7 @@ router.post(
 
 router.patch(
   '/change-password',
-  auth(
-    USER_ROLE.super_admin,
-    USER_ROLE.sub_admin,
-    USER_ROLE.admin,
-    USER_ROLE.user,
-  ),
+  auth(USER_ROLE.driver, USER_ROLE.admin, USER_ROLE.user),
   authControllers.changePassword,
 );
 

@@ -7,6 +7,7 @@ import { Location } from '../location/location.models';
 import { FuelInfoModel } from '../fuelInfo/fuelInfo.models';
 import { DeliveryAndTipModel } from '../deliveryAndTip/deliveryAndTip.models';
 import { z } from 'zod';
+import { Services } from '../services/services.models';
 
 const MILES_TO_METERS = 1609.34;
 
@@ -96,6 +97,7 @@ const createorderFuel = async (payload: IOrderFuel) => {
         `Fuel type "${payload.fuelType}" is not recognized`,
       );
     }
+    console.log('fuelInfo', fuelInfo);
     price = payload.amount * fuelInfo.fuelPrice;
   }
   // 2. Check if within 10 miles of any registered service point
@@ -139,9 +141,13 @@ const createorderFuel = async (payload: IOrderFuel) => {
   // 5. Compute final amount:
   //    - For battery orders: deliveryFee + tip
   //    - Otherwise: price + deliveryFee + tip
+  const service = await Services.findOne({
+    serviceName: 'Battery',
+  });
+  const servicesFee = service?.price ?? 0;
   const finalAmountOfPayment =
     payload.orderType === 'Battery'
-      ? deliveryFee + tip
+      ? servicesFee + deliveryFee + tip
       : price + deliveryFee + tip;
 
   // 6. Create the order record
@@ -151,6 +157,7 @@ const createorderFuel = async (payload: IOrderFuel) => {
     deliveryFee,
     tip,
     finalAmountOfPayment,
+    servicesFee,
   });
   if (!result) {
     throw new AppError(httpStatus.BAD_REQUEST, 'Failed to create order');
@@ -161,9 +168,7 @@ const createorderFuel = async (payload: IOrderFuel) => {
 
 const getAllorderFuel = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
-    orderFuel
-      .find({ isPaid: true, orderStatus: 'Pending' })
-      .populate(['userId']),
+    orderFuel.find({ isPaid: true }).populate(['userId']),
     query,
   )
     .search(['location', 'fuelType'])
@@ -179,9 +184,7 @@ const getAllorderFuel = async (query: Record<string, any>) => {
 
 const getInProgressorderFuel = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
-    orderFuel
-      .find({ isPaid: true, orderStatus: 'InProgress' })
-      .populate(['userId']),
+    orderFuel.find({ orderStatus: 'InProgress' }).populate(['userId']),
     query,
   )
     .search(['location', 'fuelType'])
@@ -197,9 +200,7 @@ const getInProgressorderFuel = async (query: Record<string, any>) => {
 
 const getActiveOrderFuel = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
-    orderFuel
-      .find({ isPaid: true, orderStatus: 'active' })
-      .populate(['userId']),
+    orderFuel.find({ orderStatus: 'active' }).populate(['userId']),
     query,
   )
     .search(['location', 'fuelType'])
@@ -215,9 +216,7 @@ const getActiveOrderFuel = async (query: Record<string, any>) => {
 
 const getDeliveredorderFuel = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
-    orderFuel
-      .find({ isPaid: true, orderStatus: 'Delivered' })
-      .populate(['userId']),
+    orderFuel.find({ orderStatus: 'Delivered' }).populate(['userId']),
     query,
   )
     .search(['location', 'fuelType'])
@@ -236,6 +235,15 @@ const getorderFuelById = async (id: string) => {
   const result = await orderFuel.findById(id).populate(['userId']);
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, 'Order not found');
+  }
+  return result;
+};
+
+const getorderFuelByDriverId = async (id: string) => {
+  const result = await orderFuel.findById({ driverId: id });
+  // .populate(['userId']);
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Order driver not found');
   }
   return result;
 };
@@ -267,4 +275,5 @@ export const orderFuelService = {
   getDeliveredorderFuel,
   getInProgressorderFuel,
   getActiveOrderFuel,
+  getorderFuelByDriverId,
 };

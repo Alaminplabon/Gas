@@ -12,7 +12,7 @@ export interface IOrderFuel {
   price: number;
   fuelType: string;
   orderType: 'Fuel' | 'Battery';
-  orderStatus: 'active' | 'Pending' | 'Delivered' | 'Cancelled';
+  orderStatus: 'active' | 'Pending' | 'Delivered' | 'Cancelled' | 'Unassigned';
   deliveryFee: number;
   tip: number;
   cancelReason: string;
@@ -20,4 +20,6 @@ export interface IOrderFuel {
   isPaid: boolean;
   finalAmountOfPayment: number;
   zipCode: string;
+  servicesFee: number;
+  driverId: ObjectId;
 }

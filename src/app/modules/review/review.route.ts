@@ -8,7 +8,7 @@ router.post('/create', reviewController.createreview);
 router.patch('/update/:id', reviewController.updatereview);
 
 router.delete('/:id', reviewController.deletereview);
-
+router.get('/driver/:id', reviewController.getreviewByDriverId);
 router.get('/:id', reviewController.getreviewById);
 router.get('/', reviewController.getAllreview);
 

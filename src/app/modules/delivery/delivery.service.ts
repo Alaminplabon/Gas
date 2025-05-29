@@ -87,9 +87,13 @@ const getdeliveryById = async (id: string) => {
 const updatedelivery = async (id: string, payload: Partial<Idelivery>) => {
   if (payload.status === 'delivered') {
     // 1) Mark the order delivered
+    const order = await Delivery.findById(id)
+    console.log('payload.orderId', order);
+    
+
     const updatedOrder = await orderFuel.findByIdAndUpdate(
-      payload.orderId,
-      { orderStatus: 'delivered' },
+      order?.orderId,
+      { orderStatus: 'Delivered' },
       { new: true, runValidators: true },
     );
     if (!updatedOrder) {

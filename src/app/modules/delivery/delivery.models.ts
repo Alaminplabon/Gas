@@ -11,7 +11,7 @@ const deliverySchema: Schema<Idelivery> = new Schema(
     orderId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'OrderFuel', // or whatever your order model is named
+      ref: 'orderFuel',
     },
     status: {
       type: String,

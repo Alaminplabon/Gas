@@ -6,7 +6,7 @@ const reviewSchema: Schema<IReview> = new Schema(
     driverId: {
       type: Schema.Types.ObjectId,
       required: true,
-      ref: 'Driver', // Replace with actual model name
+      ref: 'User', // Replace with actual model name
     },
     userId: {
       type: Schema.Types.ObjectId,

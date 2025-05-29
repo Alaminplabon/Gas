@@ -780,63 +780,249 @@ const getEarnings = async () => {
 //   };
 // };
 
+// const dashboardData = async (query: Record<string, any>) => {
+//   // Query for totalUsers and userDetails separately
+//   const totalUsers = await User.aggregate([
+//     { $match: { status: 'active' } },
+//     { $count: 'count' },
+//   ]);
+
+//   const userDetails = await User.aggregate([
+//     { $match: { role: { $ne: USER_ROLE.admin } } },
+//     {
+//       $project: {
+//         _id: 1,
+//         name: 1,
+//         email: 1,
+//         coin: 1,
+//         role: 1,
+//         referenceId: 1,
+//         createdAt: 1,
+//       },
+//     },
+//     { $sort: { createdAt: -1 } },
+//     { $limit: 15 },
+//   ]);
+
+//   // Calculate today's earnings
+//   const earnings = await Payment.aggregate([
+//     { $match: { isPaid: true } },
+//     {
+//       $lookup: {
+//         from: 'users',
+//         localField: 'user',
+//         foreignField: '_id',
+//         as: 'userDetails',
+//       },
+//     },
+//     {
+//       $lookup: {
+//         from: 'subscription',
+//         localField: 'subscription',
+//         foreignField: '_id',
+//         as: 'subscription',
+//       },
+//     },
+//     {
+//       $project: {
+//         user: { $arrayElemAt: ['$userDetails', 0] },
+//         subscription: { $arrayElemAt: ['$subscription', 0] },
+//         amount: 1,
+//         tranId: 1,
+//         status: 1,
+//         id: 1,
+//         createdAt: 1,
+//         updatedAt: 1,
+//       },
+//     },
+//     { $sort: { createdAt: -1 } },
+//     { $limit: 10 },
+//   ]);
+
+//   const totalEarnings =
+//     (earnings?.length > 0 &&
+//       earnings[0]?.totalEarnings?.length > 0 &&
+//       earnings[0]?.totalEarnings[0]?.total) ||
+//     0;
+
+//   const totalCustomer = await User.countDocuments({ role: USER_ROLE?.user });
+//   const totalServiceProvider = await User.countDocuments({
+//     role: USER_ROLE?.user,
+//   });
+
+//   const transitionData = earnings || [];
+
+//   // Calculate monthly income
+//   const year = query.incomeYear ? query.incomeYear : moment().year();
+//   const startOfYear = moment().year(year).startOf('year');
+//   const endOfYear = moment().year(year).endOf('year');
+
+//   const monthlyIncome = await Payment.aggregate([
+//     {
+//       $match: {
+//         isPaid: true,
+//         createdAt: {
+//           $gte: startOfYear.toDate(),
+//           $lte: endOfYear.toDate(),
+//         },
+//       },
+//     },
+//     {
+//       $group: {
+//         _id: { month: { $month: '$createdAt' } },
+//         income: { $sum: '$amount' },
+//       },
+//     },
+//     { $sort: { '_id.month': 1 } },
+//   ]);
+
+//   // Format monthly income to have an entry for each month
+//   const formattedMonthlyIncome = Array.from({ length: 12 }, (_, index) => ({
+//     month: moment().month(index).format('MMM'),
+//     income: 0,
+//   }));
+
+//   monthlyIncome.forEach(entry => {
+//     formattedMonthlyIncome[entry._id.month - 1].income = Math.round(
+//       entry.income,
+//     );
+//   });
+
+//   // Calculate monthly user registrations
+//   const userYear = query?.JoinYear ? query?.JoinYear : moment().year();
+//   const startOfUserYear = moment().year(userYear).startOf('year');
+//   const endOfUserYear = moment().year(userYear).endOf('year');
+
+//   const monthlyUser = await User.aggregate([
+//     {
+//       $match: {
+//         status: 'active',
+//         createdAt: {
+//           $gte: startOfUserYear.toDate(),
+//           $lte: endOfUserYear.toDate(),
+//         },
+//       },
+//     },
+//     {
+//       $group: {
+//         _id: { month: { $month: '$createdAt' } },
+//         total: { $sum: 1 }, // Corrected to count the documents
+//       },
+//     },
+//     { $sort: { '_id.month': 1 } },
+//   ]);
+
+//   // Format monthly users to have an entry for each month
+//   const formattedMonthlyUsers = Array.from({ length: 12 }, (_, index) => ({
+//     month: moment().month(index).format('MMM'),
+//     total: 0,
+//   }));
+
+//   monthlyUser.forEach(entry => {
+//     formattedMonthlyUsers[entry._id.month - 1].total = Math.round(entry.total);
+//   });
+
+//   return {
+//     totalUsers: totalUsers[0]?.count || 0,
+//     totalCustomer,
+//     totalServiceProvider,
+//     transitionData,
+//     totalIncome: totalEarnings,
+//     monthlyIncome: formattedMonthlyIncome,
+//     monthlyUsers: formattedMonthlyUsers,
+//     userDetails,
+//   };
+// };
+
 const dashboardData = async (query: Record<string, any>) => {
-  // Query for totalUsers and userDetails separately
-  const totalUsers = await User.aggregate([
-    { $match: { status: 'active' } },
-    { $count: 'count' },
-  ]);
-
-  const userDetails = await User.aggregate([
-    { $match: { role: { $ne: USER_ROLE.admin } } },
+  const usersData = await User.aggregate([
     {
-      $project: {
-        _id: 1,
-        name: 1,
-        email: 1,
-        coin: 1,
-        role: 1,
-        referenceId: 1,
-        createdAt: 1,
+      $facet: {
+        totalUsers: [
+          { $match: { 'verification.status': true } },
+          { $count: 'count' },
+        ],
+        userDetails: [
+          { $match: { role: { $ne: USER_ROLE.admin } } },
+          {
+            $project: {
+              _id: 1,
+              name: 1,
+              email: 1,
+              coin: 1,
+              role: 1,
+              referenceId: 1,
+              createdAt: 1,
+            },
+          },
+          {
+            $sort: { createdAt: -1 },
+          },
+          {
+            $limit: 15,
+          },
+        ],
       },
     },
-    { $sort: { createdAt: -1 } },
-    { $limit: 15 },
   ]);
 
-  // Calculate today's earnings
+  // const today = moment().startOf('day');
+
+  // Calculate today's income
   const earnings = await Payment.aggregate([
-    { $match: { isPaid: true } },
     {
-      $lookup: {
-        from: 'users',
-        localField: 'user',
-        foreignField: '_id',
-        as: 'userDetails',
+      $match: {
+        isPaid: true,
       },
     },
     {
-      $lookup: {
-        from: 'subscription',
-        localField: 'subscription',
-        foreignField: '_id',
-        as: 'subscription',
+      $facet: {
+        totalEarnings: [
+          {
+            $group: {
+              _id: null,
+              total: { $sum: '$amount' },
+            },
+          },
+        ],
+        allData: [
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'user',
+              foreignField: '_id',
+              as: 'userDetails',
+            },
+          },
+          {
+            $lookup: {
+              from: 'subscription',
+              localField: 'subscription',
+              foreignField: '_id',
+              as: 'subscription',
+            },
+          },
+          {
+            $project: {
+              user: { $arrayElemAt: ['$userDetails', 0] },
+              subscription: { $arrayElemAt: ['$subscription', 0] },
+              amount: 1,
+              tranId: 1,
+              status: 1,
+              id: 1,
+              createdAt: 1,
+              updatedAt: 1,
+            },
+          },
+          {
+            $sort: { createdAt: -1 },
+          },
+          {
+            $limit: 10,
+          },
+        ],
       },
     },
-    {
-      $project: {
-        user: { $arrayElemAt: ['$userDetails', 0] },
-        subscription: { $arrayElemAt: ['$subscription', 0] },
-        amount: 1,
-        tranId: 1,
-        status: 1,
-        id: 1,
-        createdAt: 1,
-        updatedAt: 1,
-      },
-    },
-    { $sort: { createdAt: -1 } },
-    { $limit: 10 },
   ]);
 
   const totalEarnings =
@@ -845,12 +1031,12 @@ const dashboardData = async (query: Record<string, any>) => {
       earnings[0]?.totalEarnings[0]?.total) ||
     0;
 
-  const totalCustomer = await User.countDocuments({ role: USER_ROLE?.user });
-  const totalServiceProvider = await User.countDocuments({
-    role: USER_ROLE?.user,
+  const totalMember = await User.countDocuments({ role: USER_ROLE?.user });
+  const totalAdministrator = await User.countDocuments({
+    role: USER_ROLE?.driver,
   });
 
-  const transitionData = earnings || [];
+  const transitionData = earnings[0]?.allData || [];
 
   // Calculate monthly income
   const year = query.incomeYear ? query.incomeYear : moment().year();
@@ -873,7 +1059,9 @@ const dashboardData = async (query: Record<string, any>) => {
         income: { $sum: '$amount' },
       },
     },
-    { $sort: { '_id.month': 1 } },
+    {
+      $sort: { '_id.month': 1 },
+    },
   ]);
 
   // Format monthly income to have an entry for each month
@@ -888,15 +1076,21 @@ const dashboardData = async (query: Record<string, any>) => {
     );
   });
 
-  // Calculate monthly user registrations
+  // Calculate monthly income
+  // JoinYear: '2022', role: ''
   const userYear = query?.JoinYear ? query?.JoinYear : moment().year();
   const startOfUserYear = moment().year(userYear).startOf('year');
   const endOfUserYear = moment().year(userYear).endOf('year');
 
+  const roleFilter = query.role
+    ? { role: query.role }
+    : { role: { $in: [USER_ROLE.user, USER_ROLE.driver] } };
+
   const monthlyUser = await User.aggregate([
     {
       $match: {
-        status: 'active',
+        'verification.status': true,
+        ...roleFilter, // Include both 'member' and 'administrator'
         createdAt: {
           $gte: startOfUserYear.toDate(),
           $lte: endOfUserYear.toDate(),
@@ -905,14 +1099,16 @@ const dashboardData = async (query: Record<string, any>) => {
     },
     {
       $group: {
-        _id: { month: { $month: '$createdAt' } },
-        total: { $sum: 1 }, // Corrected to count the documents
+        _id: { month: { $month: '$createdAt' } }, // Group by month
+        total: { $sum: 1 }, // Count users
       },
     },
-    { $sort: { '_id.month': 1 } },
+    {
+      $sort: { '_id.month': 1 }, // Ensure sorting from Jan-Dec
+    },
   ]);
-
-  // Format monthly users to have an entry for each month
+  // return monthlyUser;
+  // Format monthly income to have an entry for each month
   const formattedMonthlyUsers = Array.from({ length: 12 }, (_, index) => ({
     month: moment().month(index).format('MMM'),
     total: 0,
@@ -923,14 +1119,17 @@ const dashboardData = async (query: Record<string, any>) => {
   });
 
   return {
-    totalUsers: totalUsers[0]?.count || 0,
-    totalCustomer,
-    totalServiceProvider,
-    transitionData,
-    totalIncome: totalEarnings,
-    monthlyIncome: formattedMonthlyIncome,
+    totalUsers: usersData[0]?.totalUsers[0]?.count || 0,
+    totalMember,
+    totalAdministrator,
+    // transitionData,
+    // totalIncome: totalEarnings,
+
+    // toDayIncome: todayEarnings,
+
+    // monthlyIncome: formattedMonthlyIncome,
     monthlyUsers: formattedMonthlyUsers,
-    userDetails,
+    // userDetails: usersData[0]?.userDetails,
   };
 };
 

@@ -16,7 +16,7 @@ const createreview = async (payload: IReview) => {
 // Get all reviews with pagination, filter, search, and population
 const getAllreview = async (query: Record<string, any>) => {
   const queryBuilder = new QueryBuilder(
-    Review.find().populate(['driverId', 'userId']),
+    Review.find().populate('driverId'),
     query,
   )
     .search(['review']) // allows searching text inside the review
@@ -33,6 +33,14 @@ const getAllreview = async (query: Record<string, any>) => {
 // Get review by ID
 const getreviewById = async (id: string) => {
   const result = await Review.findById(id).populate(['driverId', 'userId']);
+  if (!result) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Review not found');
+  }
+  return result;
+};
+
+const getreviewByDriverId = async (id: string) => {
+  const result = await Review.find({ driverId: id }).populate(['userId']);
   if (!result) {
     throw new AppError(httpStatus.NOT_FOUND, 'Review not found');
   }
@@ -63,4 +71,5 @@ export const reviewService = {
   getreviewById,
   updatereview,
   deletereview,
+  getreviewByDriverId,
 };

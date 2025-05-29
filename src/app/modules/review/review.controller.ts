@@ -14,6 +14,7 @@ const createreview = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getAllreview = catchAsync(async (req: Request, res: Response) => {
+  console.log('req.query', req?.query);
   const result = await reviewService.getAllreview(req.query);
   sendResponse(res, {
     statusCode: 200,
@@ -25,6 +26,16 @@ const getAllreview = catchAsync(async (req: Request, res: Response) => {
 
 const getreviewById = catchAsync(async (req: Request, res: Response) => {
   const result = await reviewService.getreviewById(req.params.id);
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: 'Review retrieved successfully',
+    data: result,
+  });
+});
+
+const getreviewByDriverId = catchAsync(async (req: Request, res: Response) => {
+  const result = await reviewService.getreviewByDriverId(req.params.id);
   sendResponse(res, {
     statusCode: 200,
     success: true,
@@ -59,4 +70,5 @@ export const reviewController = {
   getreviewById,
   updatereview,
   deletereview,
+  getreviewByDriverId,
 };

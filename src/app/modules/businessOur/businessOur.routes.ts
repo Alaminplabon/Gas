@@ -15,12 +15,12 @@ businessOurRoutes.put(
 );
 businessOurRoutes.get(
   '/',
-  auth(USER_ROLE.admin),
+  // auth(USER_ROLE.admin),
   businessOurControllers.getBusinessHours,
 );
 businessOurRoutes.get(
   '/:id',
-  auth(USER_ROLE.admin),
+  // auth(USER_ROLE.admin),
   businessOurControllers.getSingleBusinessHour,
 );
 
